@@ -13,6 +13,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AddActivity extends AppCompatActivity {
 
     EditText et1,et2,et3,et4;
@@ -39,7 +47,45 @@ public class AddActivity extends AppCompatActivity {
                getLname=et2.getText().toString();
                getPurpose=et3.getText().toString();
                getWhomtomeet=et4.getText().toString();
-               Toast.makeText(getApplicationContext(),getFname+" "+getLname+" "+getPurpose+" "+getWhomtomeet,Toast.LENGTH_LONG).show();
+
+               if(getFname.isEmpty()||getLname.isEmpty()||getPurpose.isEmpty()||getWhomtomeet.isEmpty())
+               {
+
+                   Toast.makeText(getApplicationContext(), "All the fields are mandatory", Toast.LENGTH_SHORT).show();
+
+           }
+               else
+               {
+
+
+                   callApi();
+
+       }
+           }
+
+           private void callApi() {
+               String apiUrl="https://log-app-demo-api.onrender.com/addvisitor";
+               JSONObject data=new JSONObject();
+
+               try {
+                   data.put("firstname",getFname);
+                   data.put("lastname",getLname);
+                   data.put("purpose",getPurpose);
+                   data.put("whomToMeet",getWhomtomeet);
+               } catch (JSONException e) {
+                   throw new RuntimeException(e);
+               }
+
+               JsonObjectRequest request=new JsonObjectRequest(
+                       Request.Method.POST,
+                       apiUrl,
+                       data,
+                       response -> Toast.makeText(getApplicationContext(), "Successfully Added", Toast.LENGTH_SHORT).show(),
+                       error -> Toast.makeText(getApplicationContext(),"Something Went Wrong!",Toast.LENGTH_LONG).show()
+
+               );
+               RequestQueue queue= Volley.newRequestQueue(getApplicationContext());
+               queue.add(request);
 
 
            }
@@ -51,6 +97,8 @@ public class AddActivity extends AppCompatActivity {
                startActivity(ob);
            }
        });
+           }
+       }
 
 
 
@@ -63,5 +111,4 @@ public class AddActivity extends AppCompatActivity {
 
 
 
-    }
-}
+
